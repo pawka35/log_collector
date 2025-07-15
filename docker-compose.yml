@@ -8,14 +8,17 @@ services:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
     ports:
-      - "3310:3306"
+      - "${MARIADB_PORT}:3306"
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 30s
     volumes:
       - mariadb_data:/var/lib/mysql
+    networks:
+      - serv_network
 
   web:
     build: .
@@ -30,7 +33,7 @@ services:
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
       # DATABASE_URL или переменные для подключения к MariaDB
-      DATABASE_URL: mysql://root:${MARIADB_ROOT_PASSWORD}@db:3310/${MARIADB_DATABASE}
+      DATABASE_URL: mysql://root:${MARIADB_ROOT_PASSWORD}@db:/${MARIADB_DATABASE}
     ports:
       - "8080:8000"
     depends_on:
@@ -39,6 +42,8 @@ services:
       - .:/app
       - static_volume:/app/staticfiles
     restart: unless-stopped
+    networks:
+      - serv_network
 
   nginx:
     image: nginx:1.25
@@ -50,7 +55,13 @@ services:
     depends_on:
       - web
     restart: unless-stopped
+    networks:
+      - serv_network
 
 volumes:
   mariadb_data: 
   static_volume:
+
+networks:
+  serv_network:
+    driver: bridge
