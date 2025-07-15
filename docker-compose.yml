@@ -24,10 +24,12 @@ services:
     build: .
     container_name: log-receiver
     command: >
-      /bin/bash -c "python manage.py migrate &&
-      python manage.py collectstatic --noinput &&
-      python manage.py createsuperuser --noinput --username $DJANGO_SUPERUSER_USERNAME --email $DJANGO_SUPERUSER_EMAIL || true &&
+      /bin/bash -c "./wait-for-it.sh db:3306 --timeout=60 --strict -- \
+      python manage.py migrate && \
+      python manage.py collectstatic --noinput && \
+      python manage.py createsuperuser --noinput --username $DJANGO_SUPERUSER_USERNAME --email $DJANGO_SUPERUSER_EMAIL || true && \
       gunicorn log_reciever.wsgi:application --bind 0.0.0.0:8000"
+  
     environment:
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
