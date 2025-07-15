@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-1 ">
+  <h2 class="mb-4">Log Entries</h2>
+
+  <form method="get" class="row g-3 mb-4">
+
+    <div class="col-md-3">
+      {{ form.search.label_tag }}
+      {{ form.search|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.ip_address.label_tag }}
+      {{ form.ip_address|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.date_from.label_tag }}
+      {{ form.date_from|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.date_to.label_tag }}
+      {{ form.date_to|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.url.label_tag }}
+      {{ form.url|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.initiator.label_tag }}
+      {{ form.initiator|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.html.label_tag }}
+      {{ form.html|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-3">
+      {{ form.request_body.label_tag }}
+      {{ form.request_body|add_class:"form-control" }}
+    </div>
+
+    <div class="col-md-4 align-self-end">
+      <button type="submit" class="btn btn-primary">Apply filters</button>
+      <a href="{% url 'log_list' %}" class="btn btn-outline-warning ms-2">Reset filter</a>
+      <a href="{% url 'export_logs_csv' %}?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value|urlencode }}&{% endif %}{% endfor %}" class="btn btn-outline-secondary ms-2">⬇ Export CSV</a>
+    </div>
+  </form>
+
+  {% include '_paginator.html' %}
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>employee</th>
+        <th>
+          <a href="?sort=received_at&order={% if form.sort_field == 'received_at' and form.sort_order == 'asc' %}desc{% else %}asc{% endif %}{% for key, value in request.GET.items %}{% if key != 'sort' and key != 'order' and key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+            created_at
+            {% if form.sort_field == 'received_at' %}
+              {% if form.sort_order == 'asc' %}&#9650;{% else %}&#9660;{% endif %}
+            {% endif %}
+          </a>
+        </th>
+        <th>time</th>
+        <th>url</th>
+        <th>method</th>
+        <th>type</th>
+        <th>
+          <a href="?sort=initiator&order={% if form.sort_field == 'initiator' and form.sort_order == 'asc' %}desc{% else %}asc{% endif %}{% for key, value in request.GET.items %}{% if key != 'sort' and key != 'order' and key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+            initiator
+            {% if form.sort_field == 'initiator' %}
+              {% if form.sort_order == 'asc' %}&#9650;{% else %}&#9660;{% endif %}
+            {% endif %}
+          </a>
+        </th>
+        <th>tabId</th>
+        <th>requestId</th>
+        <th>requestBody</th>
+        <th>response</th>
+        <th>statusCode</th>
+        <th>source</th>
+        <th>html</th>
+        <th>responseTime</th>
+        <th>ip_address</th>
+        <th>received_at</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in page_obj %}
+      <tr>
+        <td>{{ log.employee }}</td>
+        <td>{{ log.received_at|date:"Y-m-d H:i:s" }}</td>
+        <td>{{ log.time }}</td>
+        <td title="{{ log.url }}"><a href="{{ log.url }}" target="_blank">{{ log.url|truncatechars:15 }}</a></td>
+        <td>{{ log.method }}</td>
+        <td>{{ log.type }}</td>
+        <td>{{ log.initiator }}</td>
+        <td>{{ log.tab_id }}</td>
+        <td>{{ log.request_id }}</td>
+        <td>{{ log.request_body|default:''|truncatechars:50 }}</td>
+        <td>{{ log.response|default:'' }}</td>
+        <td>{{ log.status_code }}</td>
+        <td>{{ log.source }}</td>
+        <td>
+          {% if log.html %}
+            <span class="text-muted">({{ log.html|length }} characters)</span>
+            <a href="{% url 'view_log_html' log.pk %}" target="_blank">
+              {{ log.html|truncatechars:15 }}
+            </a>
+          {% endif %}
+        </td>
+        <td>{{ log.response_time }}</td>
+        <td>{{ log.ip_address }}</td>
+        <td>{{ log.received_at }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="16" class="text-center text-muted">No logs found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include '_paginator.html' %}
+
+</div>
+{% endblock %}

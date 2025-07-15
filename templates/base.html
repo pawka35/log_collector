@@ -1,0 +1,20 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log collector</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-auto me-auto" style="min-width:320px;">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
