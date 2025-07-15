@@ -49,11 +49,12 @@ def receive_log(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse
         )
 
         # Сохраняем нераспарсенный лог в файл.
-        error_dir = 'unparsed_logs'
-        Path.makedirs(error_dir, exist_ok=True)
+        error_dir = Path('unparsed_logs')
+        error_dir.mkdir(parents=True, exist_ok=True)
         timestamp = timezone.now().strftime('%Y%m%d_%H%M%S_%f')
-        filename = f'{error_dir}/log_{timestamp}.txt'
-        with Path.open(filename, 'w', encoding='utf-8') as f:
+        filename = error_dir / f'log_{timestamp}.txt'
+
+        with filename.open('w', encoding='utf-8') as f:
             f.write(f'Time: {timestamp}\n')
             f.write(f'IP: {ip}\n')
             f.write(f'Error: {e!s}\n')
