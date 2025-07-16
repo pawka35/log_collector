@@ -47,6 +47,10 @@
       {{ form.request_body|add_class:"form-control" }}
     </div>
 
+    <div class="col-md-3">
+      {% include '_selector_employee.html' %}
+    </div>
+
     <div class="col-md-4 align-self-end">
       <button type="submit" class="btn btn-primary">Apply filters</button>
       <a href="{% url 'log_list' %}" class="btn btn-outline-warning ms-2">Reset filter</a>

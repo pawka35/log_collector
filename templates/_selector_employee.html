@@ -1,0 +1,9 @@
+{% load static %}
+
+<select id="id_employee" name="employee" multiple class="form-control employee-select" >
+    {% for value, label in form.employee.field.choices %}
+      <option value="{{ value }}"{% if value in form.employee.value %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+<script src="{% static 'log_list/js/selector_empolyee.js' %}"></script>

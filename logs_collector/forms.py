@@ -33,6 +33,7 @@ class LogFilterForm(forms.Form):
     initiator = forms.CharField(required=False, label='Initiator')
     request_body = forms.CharField(required=False, label='Request body')
     html = forms.CharField(required=False, label='HTML')
+    employee = forms.MultipleChoiceField(required=False, label='Employee')
 
     def __init__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         """Initialize the form with request data and set sort field and order."""
@@ -41,6 +42,11 @@ class LogFilterForm(forms.Form):
         self.sort_order = request.GET.get('order', 'desc')
         self.sort_prefix = '' if self.sort_order == 'asc' else '-'
         self.page_number = request.GET.get('page')
+        # Set choices for employee.
+        self.fields['employee'].queryset = (
+            LogEntry.objects.values_list('employee', flat=True).distinct().order_by('employee')
+        )
+        self.fields['employee'].choices = [(e, e) for e in self.fields['employee'].queryset if e]
 
     def _get_text_search_q(self, value: str) -> Q:
         """Возвращает выражение Q для поиска по всем полям, поддерживающим текстовый поиск модели LogEntry."""
@@ -76,6 +82,8 @@ class LogFilterForm(forms.Form):
             queryset = queryset.filter(requestBody__icontains=cleaned_data['request_body'])
         if cleaned_data['html']:
             queryset = queryset.filter(html__icontains=cleaned_data['html'])
+        if cleaned_data.get('employee'):
+            queryset = queryset.filter(employee__in=cleaned_data['employee'])
 
         return queryset
 
