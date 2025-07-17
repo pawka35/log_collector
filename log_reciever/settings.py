@@ -25,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Получение переменных из окружения
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG') == 'True'  # Преобразование строки в булево значение
-DATABASE_PWD = os.environ.get('MARIADB_ROOT_PASSWORD')
+DATABASE_USER = os.environ.get('MARIADB_USER')
+DATABASE_PASSWORD = os.environ.get('MARIADB_PASSWORD')
 DATABASE = os.environ.get('MARIADB_DATABASE')
 DATABASE_PORT = os.environ.get('MARIADB_PORT')
 DATABASE_HOST = os.environ.get('MARIADB_HOST')
@@ -96,8 +97,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': DATABASE,
-        'USER': 'root',
-        'PASSWORD': DATABASE_PWD,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
         'HOST': DATABASE_HOST,
         'PORT': DATABASE_PORT,
         'COMM_MAX_AGE': 0,
