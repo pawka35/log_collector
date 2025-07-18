@@ -45,6 +45,8 @@ class LogEntry(models.Model):
 class FailedLogEntry(models.Model):
     """Модель для хранения неудачных попыток записи логов."""
 
+    FOLDER_NAME = 'unparsed_logs'
+
     raw_data = models.TextField()  # если будет ошибка \"Data too long\", заменить на max_length=16777215
     error_message = models.TextField()
     received_at = models.DateTimeField(default=timezone.now)

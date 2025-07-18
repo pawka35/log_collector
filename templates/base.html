@@ -1,22 +1,23 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log collector</title>
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-    <link href="{% static 'slim_select/css/slimselect.css' %}" rel="stylesheet"></link>
-    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'slim_select/js/slimselect.min.js' %}"></script>
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-auto me-auto" style="min-width:320px;">
-          {% block content %}{% endblock %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Log collector</title>
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+        <link href="{% static 'slim_select/css/slimselect.css' %}" rel="stylesheet"></link>
+        <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'slim_select/js/slimselect.min.js' %}"></script>
+    </head>
+    <body>
+    {% include '_navigation.html' %}
+        <div class="container-fluid mt-2">
+            <div class="row">
+                <div class="col-auto me-auto" style="min-width:320px;">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </body>
+    </body>
 </html>

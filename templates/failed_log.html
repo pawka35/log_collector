@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block content %}
+    <div class="container mt-1 ">
+        <h2 class="mb-4">Failed Logs</h2>
+        <form method="get" class="row g-3 mb-4 w-100">
+            <div class="col-md-3">
+                {{ form.ip_address.label_tag }}
+                {{ form.ip_address|add_class:"form-control" }}
+            </div>
+            <div class="col-md-3">
+                {{ form.date_from.label_tag }}
+                {{ form.date_from|add_class:"form-control" }}
+            </div>
+            <div class="col-md-3">
+                {{ form.date_to.label_tag }}
+                {{ form.date_to|add_class:"form-control" }}
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary">Apply filters</button>
+                <a href="{% url 'failed_log_list' %}" class="btn btn-outline-warning ms-2">Reset filter</a>
+            </div>
+        </form>
+        {% include '_paginator.html' %}
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>received_at</th>
+                <th>ip_address</th>
+                <th>error_message</th>
+                <th>raw_data</th>
+                <th>file</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for log in page_obj %}
+                <tr>
+                    <td>{{ log.id }}</td>
+                    <td>{{ log.received_at|date:"Y-m-d H:i:s" }}</td>
+                    <td>{{ log.ip_address }}</td>
+                    <td>{{ log.error_message }}</td>
+                    <td>{{ log.raw_data|truncatechars:150 }}</td>
+                    <td><a href="{% url 'download_unparsed_log' log.id %}" target="_blank" >Download</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No logs found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% include '_paginator.html' %}
+    </div>
+{% endblock %}

@@ -23,8 +23,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Получение переменных из окружения
-SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = os.environ.get('DEBUG') == 'True'  # Преобразование строки в булево значение
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+DEBUG_MODE = os.environ.get('DEBUG') == 'True'  # Преобразование строки в булево значение
 DATABASE_USER = os.environ.get('MARIADB_USER')
 DATABASE_PASSWORD = os.environ.get('MARIADB_PASSWORD')
 DATABASE = os.environ.get('MARIADB_DATABASE')
@@ -38,11 +38,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5y^^xkin_3g1&t)xnl2w9j0%@#u2uq%d-p)yk@mha#6e6b7^6#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = DEBUG
+DEBUG = DEBUG_MODE
 
 ALLOWED_HOSTS = ['*']
 
@@ -142,9 +140,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    BASE_DIR / 'static',
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # <--- добавьте это!
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -152,3 +150,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # <--- добавьте э�
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 мегабайт
+
+PLUGIN_KEY = os.environ.get('PLUGIN_KEY')
+CUSTOM_HEADER = os.environ.get('CUSTOM_HEADER')

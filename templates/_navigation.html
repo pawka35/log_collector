@@ -1,0 +1,14 @@
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid d-flex align-items-center">
+        <div class="dropdown d-flex align-items-center">
+            <button class="navbar-toggler" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand mb-0 h1 ps-5" href="#">LogCollector</a>
+            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                <li><a class="dropdown-item" href="{% url 'log_list' %}">Log Entries</a></li>
+                <li><a class="dropdown-item" href="{% url 'failed_log_list' %}">Failed Logs</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

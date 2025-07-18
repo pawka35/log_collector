@@ -63,6 +63,7 @@
   <table class="table table-bordered table-hover">
     <thead class="table-light">
       <tr>
+        <th>ID</th>
         <th>employee</th>
         <th>
           <a href="?sort=received_at&order={% if form.sort_field == 'received_at' and form.sort_order == 'asc' %}desc{% else %}asc{% endif %}{% for key, value in request.GET.items %}{% if key != 'sort' and key != 'order' and key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
@@ -99,6 +100,7 @@
     <tbody>
       {% for log in page_obj %}
       <tr>
+        <td>{{ log.id }}</td>
         <td>{{ log.employee }}</td>
         <td>{{ log.received_at|date:"Y-m-d H:i:s" }}</td>
         <td>{{ log.time }}</td>

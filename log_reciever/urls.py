@@ -17,7 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from logs_collector.views import export_logs_csv, log_list, receive_log, view_log_html
+from logs_collector.views import (
+    download_unparsed_log,
+    export_logs_csv,
+    failed_log_list,
+    log_list,
+    receive_log,
+    view_log_html,
+)
 
 
 urlpatterns = [
@@ -26,4 +33,6 @@ urlpatterns = [
     path('receiver', receive_log, name='receive_log'),
     path('logs/<int:pk>/html', view_log_html, name='view_log_html'),
     path('logs/export', export_logs_csv, name='export_logs_csv'),
+    path('failed_logs', failed_log_list, name='failed_log_list'),
+    path('download-unparsed-log/<int:failed_log_id>/', download_unparsed_log, name='download_unparsed_log'),
 ]

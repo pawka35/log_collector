@@ -7,7 +7,59 @@ from django.core.paginator import Page, Paginator
 from django.db.models import CharField, EmailField, Q, QuerySet, SlugField, TextChoices, TextField
 from django.http.request import HttpRequest
 
-from logs_collector.models import LogEntry
+from logs_collector.models import FailedLogEntry, LogEntry
+
+
+class FailedLogEntryForm(forms.Form):
+    """Form for filtering and sorting failed log entries."""
+
+    ip_address = forms.CharField(required=False, label='IP Address')
+    date_from = forms.DateTimeField(
+        required=False, label='From date', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+    )
+    date_to = forms.DateTimeField(
+        required=False, label='To date', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+    )
+
+    def __init__(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
+        """Initialize the form with request data and set sort field and order."""
+        super().__init__(*args, **kwargs)
+        self.page_number = request.GET.get('page')
+        self.items_count = None
+        self.total_pages = None
+        self.per_page = None
+
+    def filter_queryset(self, queryset: QuerySet) -> QuerySet:
+        """Filter the queryset based on form data."""
+        cleaned_data = self.cleaned_data
+
+        if cleaned_data['ip_address']:
+            queryset = queryset.filter(ip_address__icontains=cleaned_data['ip_address'])
+        if cleaned_data['date_from']:
+            queryset = queryset.filter(received_at__gte=cleaned_data['date_from'])
+        if cleaned_data['date_to']:
+            queryset = queryset.filter(received_at__lte=cleaned_data['date_to'])
+
+        return queryset
+
+    def get_initial_queryset(self) -> QuerySet[LogEntry]:
+        """Get the initial queryset of log entries."""
+        return FailedLogEntry.objects.all()
+
+    def get_items(self) -> QuerySet[LogEntry]:
+        """Get filtered and sorted log entries based on form data."""
+        queryset = self.get_initial_queryset().order_by('-received_at')
+        if not self.is_valid():
+            return queryset
+        return self.filter_queryset(queryset)
+
+    def get_page(self) -> Page:
+        """Get a page of log entries based on the form data."""
+        paginator = Paginator(self.get_items(), 25)
+        self.items_count = paginator.count
+        self.total_pages = paginator.num_pages
+        self.per_page = paginator.per_page
+        return paginator.get_page(self.page_number)
 
 
 class LogFilterForm(forms.Form):
@@ -42,6 +94,10 @@ class LogFilterForm(forms.Form):
         self.sort_order = request.GET.get('order', 'desc')
         self.sort_prefix = '' if self.sort_order == 'asc' else '-'
         self.page_number = request.GET.get('page')
+        self.items_count = None
+        self.total_pages = None
+        self.per_page = None
+
         # Set choices for employee.
         self.fields['employee'].queryset = (
             LogEntry.objects.values_list('employee', flat=True).distinct().order_by('employee')
@@ -107,4 +163,7 @@ class LogFilterForm(forms.Form):
     def get_page(self) -> Page:
         """Get a page of log entries based on the form data."""
         paginator = Paginator(self.get_items(), 25)
+        self.items_count = paginator.count
+        self.total_pages = paginator.num_pages
+        self.per_page = paginator.per_page
         return paginator.get_page(self.page_number)
